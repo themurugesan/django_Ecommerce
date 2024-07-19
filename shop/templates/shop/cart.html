@@ -1,0 +1,96 @@
+{% extends 'shop/layouts/main.html' %}
+{% block title %}
+  Registration | ShopKart
+{% endblock title %}
+{% block content %}
+  <section class="bg-light py-4 my-5" style="min-height:600px;">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <h4 class="mb-3">Cart  Items</h4>
+          <hr style="border-color:#b8bfc2;">
+        </div>
+      
+        <table>
+            <tr>
+                <th>Image</th>
+                <th>Product Name</th>
+                <th>Unit</th>
+                <th>Quantity</th>
+                <th>Amount</th>
+                <th>Remove</th>
+            </tr>
+          
+
+            {% for item in cart %}
+           <tr>
+              <td><img src="{{item.product.product_image.url}}" height="75px" alt="{{item.product.name}}"></td>
+              <td>{{item.product.name}}</td>
+              <td>{{item.product.selling_price | stringformat:'d'}}</td>
+              <td>{{item.product_qty}}</td>
+              <td class="amt">{{item.total_cost | stringformat:'d'}}</td>
+              <td><a href="{% url 'remove_cart' item.id %}"  onclick="return confirm('Are you sure? to Remove')"  class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> Remove</a></td>
+            </tr>
+            {% endfor %}
+            <tr>
+              <td></td>
+              <td></td>
+              <td colspan="2"><b>Total Amount</b></td>
+              <th id="net">0</th>
+              <td><button class="btn btn-primary btn-sm">
+                <i class="fa fa-check-circle"></i> Check Out
+              </button></td>
+            </tr>
+           
+        </table>
+       
+      </div>
+      </div>
+  </section>
+
+  <script>
+    const nodes = document.querySelectorAll('.amt');
+    const arr = Array.from(nodes);
+    const res = arr.reduce((acc, curr) => {
+     return acc += Number(curr.textContent)
+    }, 0);
+    document.getElementById("net").innerHTML="Rs : "+res;
+
+  </script>
+
+<section class="bg-light py-4 my-5" style="min-height:600px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h4 class="mb-3">{{category_name}} Products</h4>
+        <hr style="border-color:#b8bfc2;">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item active">{{category_name}} Collections</li>
+          </ol>
+        </nav>
+        {% include 'shop/inc/message.html' %}
+      </div>
+      {% for item in products %}
+      <div class="col-md-4 col-lg-3">
+        <div class="card my-3">
+          <img src="{{item.product_image.url}}"  class="card-image-top" alt="Categories">
+          <a href="{% url 'product_details' category_name item.name %}">
+          <div class="card-body">
+            <h5 class="card-title text-primary">{{ item.name }}</h5>
+            <p class="card-text">
+              <span class="float-start old_price"><s>Rs.{{ item.original_price | stringformat:'d'}}</s></span>
+              <span class="float-end new_price">Rs.{{ item.selling_price | stringformat:'d' }}</span>
+            </p>
+          </div>
+        </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+ 
+{% endblock content %}
+
